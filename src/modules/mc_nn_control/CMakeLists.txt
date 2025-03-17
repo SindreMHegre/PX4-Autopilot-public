@@ -35,6 +35,7 @@ get_directory_property(FLAGS COMPILE_OPTIONS)
 list(REMOVE_ITEM FLAGS "-Wcast-align")
 set_directory_properties(PROPERTIES COMPILE_OPTIONS "${FLAGS}")
 
+
 px4_add_module(
 	MODULE mc_nn_control
 	MAIN mc_nn_control
@@ -47,10 +48,35 @@ px4_add_module(
 		allocation_net.cpp
 		allocation_net.hpp
 	DEPENDS
-		tflm
 		px4_work_queue
 		mathlib
 )
-target_link_libraries(mc_nn_control PRIVATE tflm)
+target_link_libraries(mc_nn_control PRIVATE libtensorflow-lite-micro.a)
 target_include_directories(mc_nn_control PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/lib/tflm)
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/flatbuffers_include
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/ruy
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/gemmlowp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/signal
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/kissfft
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/cmsis/Cortex_DFP/Device/ARMCM7/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/cmsis/CMSIS/Core/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/cmsis
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/cmsis_nn
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/cmsis_nn/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/include/13.2.1
+    ${CMAKE_CURRENT_SOURCE_DIR}/tflm/include/13.2.1/arm-none-eabi
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/micro
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/micro/arena_allocator
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/micro/memory_planner
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/micro/tflite_bridge
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/micro/kernels
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/kernels
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/kernels/internal
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/core/api
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/core/c
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/lite/schema
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/compiler/mlir/lite/core/api
+#     ${CMAKE_CURRENT_SOURCE_DIR}/tflm/tensorflow/compiler/mlir/lite/schema
+)

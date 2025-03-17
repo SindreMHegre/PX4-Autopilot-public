@@ -48,10 +48,9 @@
 #include <px4_platform_common/px4_work_queue/WorkItem.hpp>
 #include <matrix/matrix/math.hpp>
 
-#include <tflite_micro/tensorflow/lite/micro/micro_mutable_op_resolver.h>
-#include <tflite_micro/tensorflow/lite/micro/micro_interpreter.h>
-#include <tflite_micro/tensorflow/lite/schema/schema_generated.h>
-#include <tflite_micro/tensorflow/lite/kernels/internal/reference/tanh.h>
+#include <tensorflow/lite/micro/micro_mutable_op_resolver.h>
+#include <tensorflow/lite/micro/micro_interpreter.h>
+#include <tensorflow/lite/schema/schema_generated.h>
 
 // Include model
 #include "allocation_net.hpp"
