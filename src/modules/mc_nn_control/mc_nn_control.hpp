@@ -36,6 +36,7 @@
  * Multicopter Neural Network Control module, from position setpoints to control allocator.
  *
  * @author Sindre Meyer Hegre <sindre.hegre@gmail.com>
+ * @author Welf Rehberg <welf.rehberg@ntnu.no>
  */
 #pragma once
 
