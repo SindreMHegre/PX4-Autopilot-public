@@ -33,42 +33,33 @@
 
 /**
  * @file mc_nn_control_params.c
- * Parameters for the Multicopter Neural Network Control module
+ * Parameters for the Multicopter Neural Network Test module
  *
  * @author Sindre Meyer Hegre <sindre.hegre@gmail.com>
  */
 
 /**
- * If true the neural network control is automatically started on boot.
+ * If true the neural test run is performed anti-clockwise
  *
  * @boolean
  * @group Neural Control
  */
-PARAM_DEFINE_INT32(MC_NN_EN, 1);
+PARAM_DEFINE_INT32(NN_TEST_CLK, 1);
 
 /**
- * The maximum RPM of the motors. Used to normalize the output of the neural network.
+ * The position of the waypoints in the x and y axis.
  *
  * @min 0
- * @max 80000
+ * @max 5
  * @group Neural Control
  */
-PARAM_DEFINE_INT32(MAX_RPM, 22000);
+PARAM_DEFINE_FLOAT(NN_TEST_DIST, 0.7);
 
 /**
- * The minimum RPM of the motors. Used to normalize the output of the neural network.
+ * The Time in microseconds between each waypoint.
  *
  * @min 0
- * @max 80000
+ * @max 20000000
  * @group Neural Control
  */
-PARAM_DEFINE_INT32(MIN_RPM, 1000);
-
-/**
- * Thrust coefficient of the motors. Used to normalize the output of the neural network. Divided by 100 000
- *
- * @min 0.0
- * @max 5.0
- * @group Neural Control
- */
-PARAM_DEFINE_FLOAT(THRUST_COEFF, 1.5f);
+PARAM_DEFINE_INT32(NN_TEST_TIME, 5000000);

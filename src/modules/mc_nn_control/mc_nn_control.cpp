@@ -164,17 +164,18 @@
 	 config_control_setpoints.timestamp = hrt_absolute_time();
 	 config_control_setpoints.source_id = mode_id;
 	 // TODO: Should these be stopped to save computing, or is it best to keep them running for safety?
-	 config_control_setpoints.flag_multicopter_position_control_enabled = true;
-	 config_control_setpoints.flag_control_manual_enabled = false;
-	 config_control_setpoints.flag_control_offboard_enabled = true;
-	 config_control_setpoints.flag_control_position_enabled = true;
-	 config_control_setpoints.flag_control_velocity_enabled = true;
-	 config_control_setpoints.flag_control_altitude_enabled = true;
-	 config_control_setpoints.flag_control_climb_rate_enabled = true;
-	 config_control_setpoints.flag_control_acceleration_enabled = true;
-	 config_control_setpoints.flag_control_attitude_enabled = true;
-	 config_control_setpoints.flag_control_rates_enabled = true;
+	config_control_setpoints.flag_multicopter_position_control_enabled = false;
+	config_control_setpoints.flag_control_manual_enabled = false;
+	config_control_setpoints.flag_control_offboard_enabled = false;
+	config_control_setpoints.flag_control_position_enabled = true;
+	//  config_control_setpoints.flag_control_velocity_enabled = true;
+	//  config_control_setpoints.flag_control_altitude_enabled = true;
+	config_control_setpoints.flag_control_climb_rate_enabled = true;
+	//  config_control_setpoints.flag_control_acceleration_enabled = true;
+	//  config_control_setpoints.flag_control_attitude_enabled = true;
+	//  config_control_setpoints.flag_control_rates_enabled = true;
 	 config_control_setpoints.flag_control_allocation_enabled = false;
+	 config_control_setpoints.flag_control_termination_enabled = true;
 	 _config_control_setpoints_pub.publish(config_control_setpoints);
  }
 
@@ -245,6 +246,12 @@
 	 frame_transf_2(2, 0) = 0.0f;
 	 frame_transf_2(2, 1) = 0.0f;
 	 frame_transf_2(2, 2) = 1.0f;
+
+	if (_trajectory_setpoint.position[0] == NAN || _trajectory_setpoint.position[1] == NAN || _trajectory_setpoint.position[2] == NAN) {
+		_trajectory_setpoint.position[0] = 0.0f;
+		_trajectory_setpoint.position[1] = 0.0f;
+		_trajectory_setpoint.position[2] = -1.0f;
+	}
 
 	 matrix::Vector3f position_local = matrix::Vector3f(_position.x, _position.y, _position.z);
 	 position_local = frame_transf * frame_transf_2 * position_local;
@@ -321,6 +328,13 @@
 	 const float tmp2 = b * b / (4.f * a * a);
 
 	 for (int i = 0; i < 4; i++) {
+
+		if (_output_tensor->data.f[i] < -1.0f) {
+			_output_tensor->data.f[i] = -1.0f;
+		} else if (_output_tensor->data.f[i] > 1.0f) {
+			_output_tensor->data.f[i] = 1.0f;
+		}
+
 		 _output_tensor->data.f[i] = _output_tensor->data.f[i] + 1.0f;
 		 float rps = _output_tensor->data.f[i] / thrust_coeff;
 		 rps = sqrt(rps);
@@ -429,7 +443,14 @@
 		 }
 
 		 if (_trajectory_setpoint_sub.updated()) {
-			 _trajectory_setpoint_sub.copy(&_trajectory_setpoint);
+			trajectory_setpoint_s _trajectory_setpoint_temp;
+			_trajectory_setpoint_sub.copy(&_trajectory_setpoint_temp);
+
+			// Make sure the trajectory setpoint is not before setting it, this will kill the controller
+			if (_trajectory_setpoint_temp.position[0] != NAN && _trajectory_setpoint_temp.position[1] != NAN &&
+				_trajectory_setpoint_temp.position[2] != NAN) {
+				_trajectory_setpoint = _trajectory_setpoint_temp;
+			}
 		 }
 
 		 PopulateInputTensor();
