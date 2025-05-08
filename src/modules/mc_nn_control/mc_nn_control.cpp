@@ -247,10 +247,10 @@
 	 frame_transf_2(2, 1) = 0.0f;
 	 frame_transf_2(2, 2) = 1.0f;
 
-	if (_trajectory_setpoint.position[0] == NAN || _trajectory_setpoint.position[1] == NAN || _trajectory_setpoint.position[2] == NAN) {
-		_trajectory_setpoint.position[0] = 0.0f;
-		_trajectory_setpoint.position[1] = 0.0f;
-		_trajectory_setpoint.position[2] = -1.0f;
+	if (!PX4_ISFINITE(_trajectory_setpoint.position[0]) || !PX4_ISFINITE(_trajectory_setpoint.position[1]) || !PX4_ISFINITE(_trajectory_setpoint.position[2])) {
+	    _trajectory_setpoint.position[0] = 0.0f;
+	    _trajectory_setpoint.position[1] = 0.0f;
+	    _trajectory_setpoint.position[2] = -1.0f;
 	}
 
 	 matrix::Vector3f position_local = matrix::Vector3f(_position.x, _position.y, _position.z);
@@ -447,8 +447,8 @@
 			_trajectory_setpoint_sub.copy(&_trajectory_setpoint_temp);
 
 			// Make sure the trajectory setpoint is not before setting it, this will kill the controller
-			if (_trajectory_setpoint_temp.position[0] != NAN && _trajectory_setpoint_temp.position[1] != NAN &&
-				_trajectory_setpoint_temp.position[2] != NAN) {
+			if (PX4_ISFINITE(_trajectory_setpoint_temp.position[0]) && PX4_ISFINITE(_trajectory_setpoint_temp.position[1]) &&
+			PX4_ISFINITE(_trajectory_setpoint_temp.position[2])) {
 				_trajectory_setpoint = _trajectory_setpoint_temp;
 			}
 		 }

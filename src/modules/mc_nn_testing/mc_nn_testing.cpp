@@ -96,17 +96,11 @@ void MulticopterNeuralNetworkTesting::PopulateSetpoints()
 	trajectory_setpoint4.position[1] = distance;
 	trajectory_setpoint4.position[2] = -1.0f;
 
-	trajectory_setpoint_s trajectory_setpoint5;
-	trajectory_setpoint5.position[0] = 0.0f;
-	trajectory_setpoint5.position[1] = 0.0f;
-	trajectory_setpoint5.position[2] = -1.0f;
-
 	_trajectory_setpoints[0] = trajectory_setpoint0;
 	_trajectory_setpoints[1] = trajectory_setpoint1;
 	_trajectory_setpoints[2] = trajectory_setpoint2;
 	_trajectory_setpoints[3] = trajectory_setpoint3;
 	_trajectory_setpoints[4] = trajectory_setpoint4;
-	_trajectory_setpoints[5] = trajectory_setpoint5;
 
 }
 
@@ -152,7 +146,7 @@ void MulticopterNeuralNetworkTesting::PopulateSetpoints()
 
 	int32_t time = _param_time.get();
 
-	if (should_exit() || time_since_start > time*6) {
+	if (should_exit()) {
 		ScheduleClear();
 		exit_and_cleanup();
 		return;
@@ -171,30 +165,30 @@ void MulticopterNeuralNetworkTesting::PopulateSetpoints()
 	trajectory_setpoint.yaw = 0.0f;
 	trajectory_setpoint.yawspeed = 0.0f;
 
-	if (time_since_start < time) {
+	if (time_since_start < time*2 || _param_hover.get() == 1) {
 		trajectory_setpoint.position[0] = _trajectory_setpoints[0].position[0];
 		trajectory_setpoint.position[1] = _trajectory_setpoints[0].position[1];
 		trajectory_setpoint.position[2] = _trajectory_setpoints[0].position[2];
-	} else if (time_since_start < time*2) {
+	} else if (time_since_start < time*3) {
 		trajectory_setpoint.position[0] = _trajectory_setpoints[direction[0]].position[0];
 		trajectory_setpoint.position[1] = _trajectory_setpoints[direction[0]].position[1];
 		trajectory_setpoint.position[2] = _trajectory_setpoints[direction[0]].position[2];
-	} else if (time_since_start < time*3) {
+	} else if (time_since_start < time*4) {
 		trajectory_setpoint.position[0] = _trajectory_setpoints[direction[1]].position[0];
 		trajectory_setpoint.position[1] = _trajectory_setpoints[direction[1]].position[1];
 		trajectory_setpoint.position[2] = _trajectory_setpoints[direction[1]].position[2];
-	} else if (time_since_start < time*4) {
+	} else if (time_since_start < time*5) {
 		trajectory_setpoint.position[0] = _trajectory_setpoints[direction[2]].position[0];
 		trajectory_setpoint.position[1] = _trajectory_setpoints[direction[2]].position[1];
 		trajectory_setpoint.position[2] = _trajectory_setpoints[direction[2]].position[2];
-	} else if (time_since_start < time*5) {
+	} else if (time_since_start < time*6) {
 		trajectory_setpoint.position[0] = _trajectory_setpoints[direction[3]].position[0];
 		trajectory_setpoint.position[1] = _trajectory_setpoints[direction[3]].position[1];
 		trajectory_setpoint.position[2] = _trajectory_setpoints[direction[3]].position[2];
 	} else {
-		trajectory_setpoint.position[0] = _trajectory_setpoints[5].position[0];
-		trajectory_setpoint.position[1] = _trajectory_setpoints[5].position[1];
-		trajectory_setpoint.position[2] = _trajectory_setpoints[5].position[2];
+		trajectory_setpoint.position[0] = _trajectory_setpoints[0].position[0];
+		trajectory_setpoint.position[1] = _trajectory_setpoints[0].position[1];
+		trajectory_setpoint.position[2] = _trajectory_setpoints[0].position[2];
 	}
 
 

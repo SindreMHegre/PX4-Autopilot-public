@@ -47,6 +47,14 @@
 PARAM_DEFINE_INT32(NN_TEST_CLK, 1);
 
 /**
+ * If true the neural test makes the drone hover in place
+ *
+ * @boolean
+ * @group Neural Control
+ */
+PARAM_DEFINE_INT32(NN_TEST_HOVER, 0);
+
+/**
  * The position of the waypoints in the x and y axis.
  *
  * @min 0

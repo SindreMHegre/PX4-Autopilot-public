@@ -31,64 +31,66 @@
 #
 ############################################################################
 
-px4_add_git_submodule(TARGET git_tflite-micro PATH tflite_micro)
+if(CONFIG_LIB_TFLM)
+	px4_add_git_submodule(TARGET git_tflite-micro PATH tflite_micro)
 
-set(TFLITE_DOWNLOADS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/tools/make/downloads)
-set(TFLITE_GEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/gen/cortex_m_generic_cortex-m7_default_cmsis_nn_gcc)
+	set(TFLITE_DOWNLOADS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/tools/make/downloads)
+	set(TFLITE_GEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/gen/cortex_m_generic_cortex-m7_default_cmsis_nn_gcc)
 
-get_directory_property(FLAGS COMPILE_OPTIONS)
-list(REMOVE_ITEM FLAGS "-Wcast-align")
-set_directory_properties(PROPERTIES COMPILE_OPTIONS "${FLAGS}")
+	get_directory_property(FLAGS COMPILE_OPTIONS)
+	list(REMOVE_ITEM FLAGS "-Wcast-align")
+	set_directory_properties(PROPERTIES COMPILE_OPTIONS "${FLAGS}")
 
 
-file(GLOB TFLITE_MICRO_SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/arena_allocator/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/memory_planner/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/tflite_bridge/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/kernels/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/kernels/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/kernels/internal/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/kernels/internal/reference/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/core/api/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/core/c/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/schema/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/compiler/mlir/lite/core/api/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/compiler/mlir/lite/schema/*.cc
-)
+	file(GLOB TFLITE_MICRO_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/arena_allocator/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/memory_planner/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/tflite_bridge/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/micro/kernels/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/kernels/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/kernels/internal/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/kernels/internal/reference/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/core/api/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/core/c/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/lite/schema/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/compiler/mlir/lite/core/api/*.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro/tensorflow/compiler/mlir/lite/schema/*.cc
+	)
 
-# Filter out tests as they cause errors
-list(FILTER TFLITE_MICRO_SRCS EXCLUDE REGEX ".*_test.*\\.cc$")
+	# Filter out tests as they cause errors
+	list(FILTER TFLITE_MICRO_SRCS EXCLUDE REGEX ".*_test.*\\.cc$")
 
-set(TFLM_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro
-    ${TFLITE_DOWNLOADS_DIR}
-    ${TFLITE_DOWNLOADS_DIR}/flatbuffers/include
-    ${TFLITE_DOWNLOADS_DIR}/ruy
-    ${TFLITE_DOWNLOADS_DIR}/gemmlowp
-    ${TFLITE_DOWNLOADS_DIR}/kissfft
-    ${TFLITE_DOWNLOADS_DIR}/cmsis/Cortex_DFP/Device/ARMCM7/Include
-    ${TFLITE_DOWNLOADS_DIR}/cmsis/CMSIS/Core/Include
-    ${TFLITE_DOWNLOADS_DIR}/cmsis
-    ${TFLITE_DOWNLOADS_DIR}/cmsis_nn
-    ${TFLITE_DOWNLOADS_DIR}/cmsis_nn/Include
-    ${TFLITE_GEN_DIR}/genfiles
-    )
+	set(TFLM_INCLUDE_DIRS
+	${CMAKE_CURRENT_SOURCE_DIR}/tflite_micro
+	${TFLITE_DOWNLOADS_DIR}
+	${TFLITE_DOWNLOADS_DIR}/flatbuffers/include
+	${TFLITE_DOWNLOADS_DIR}/ruy
+	${TFLITE_DOWNLOADS_DIR}/gemmlowp
+	${TFLITE_DOWNLOADS_DIR}/kissfft
+	${TFLITE_DOWNLOADS_DIR}/cmsis/Cortex_DFP/Device/ARMCM7/Include
+	${TFLITE_DOWNLOADS_DIR}/cmsis/CMSIS/Core/Include
+	${TFLITE_DOWNLOADS_DIR}/cmsis
+	${TFLITE_DOWNLOADS_DIR}/cmsis_nn
+	${TFLITE_DOWNLOADS_DIR}/cmsis_nn/Include
+	${TFLITE_GEN_DIR}/genfiles
+	)
 
-    # Add C++ 17 std lib if building for NuttX
-    if(CONFIG_BOARD_TOOLCHAIN STREQUAL "arm-none-eabi")
-    list(APPEND TFLM_INCLUDE_DIRS
-	${CMAKE_CURRENT_SOURCE_DIR}/include/13.2.1
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/13.2.1/arm-none-eabi
-    )
+	# Add C++ 17 std lib if building for NuttX
+	if(CONFIG_BOARD_TOOLCHAIN STREQUAL "arm-none-eabi")
+	list(APPEND TFLM_INCLUDE_DIRS
+		${CMAKE_CURRENT_SOURCE_DIR}/include/13.2.1
+		${CMAKE_CURRENT_SOURCE_DIR}/include/13.2.1/arm-none-eabi
+	)
+	endif()
+
+	px4_add_library(tflm ${TFLITE_MICRO_SRCS})
+
+	target_include_directories(tflm PUBLIC ${TFLM_INCLUDE_DIRS})
+
+	target_compile_options(tflm PUBLIC
+	-Wno-float-equal
+	-Wno-shadow
+	)
 endif()
-
-px4_add_library(tflm ${TFLITE_MICRO_SRCS})
-
-target_include_directories(tflm PUBLIC ${TFLM_INCLUDE_DIRS})
-
-target_compile_options(tflm PUBLIC
-    -Wno-float-equal
-    -Wno-shadow
-)

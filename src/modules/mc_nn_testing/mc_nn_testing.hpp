@@ -95,6 +95,7 @@ private:
 
 	DEFINE_PARAMETERS(
 		(ParamBool<px4::params::NN_TEST_CLK>) _param_direction,
+		(ParamBool<px4::params::NN_TEST_HOVER>) _param_hover,
 		(ParamFloat<px4::params::NN_TEST_DIST>) _param_dist,
 		(ParamInt<px4::params::NN_TEST_TIME>) _param_time
 	)
