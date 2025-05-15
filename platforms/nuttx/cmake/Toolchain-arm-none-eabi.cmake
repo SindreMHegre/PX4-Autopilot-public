@@ -9,7 +9,7 @@ set(TOOLCHAIN_PREFIX ${triple})
 
 # Define the path to the new toolchain
 # TODO: Change {Your_local_path} to your local file path to PX4-Autopilot
-set(NEW_TOOLCHAIN_PATH "/{Your_local_path}/PX4-Autopilot/src/lib/tflm/tflite_micro/tensorflow/lite/micro/tools/make/downloads/gcc_embedded/bin")
+set(NEW_TOOLCHAIN_PATH "/{Your_local_path}/PX4-Autopilot-public/src/lib/tflm/tflite_micro/tensorflow/lite/micro/tools/make/downloads/gcc_embedded/bin")
 
 # Set the compiler paths
 set(CMAKE_C_COMPILER ${NEW_TOOLCHAIN_PATH}/${TOOLCHAIN_PREFIX}-gcc)
