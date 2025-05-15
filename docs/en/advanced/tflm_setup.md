@@ -30,7 +30,7 @@ This guide assumes that you can build PX4 locally from before. So if you have no
 1. PX4 excludes standard libraries by default, if they are enabled they will break the nuttx build. To get around this we extract some of the standard library header files. This needs to be done after the TFLM make command is finished.
 	```sh
 	cd src/lib/tflm
-	cp -r tflite_micro/tensorflow/lite/micro/tools/make/downloads/gcc_embedded/arm-none-eabi/include/c++/13.2.1/ include
+	cp -r tflite_micro/tensorflow/lite/micro/tools/make/downloads/gcc_embedded/arm-none-eabi/include/c++/13.2.1/ include/13.2.1
 	rm include/13.2.1/arm-none-eabi/bits/ctype_base.h
 	cp ../../modules/mc_nn_control/setup/ctype_base.h include/13.2.1/arm-none-eabi/bits/
 	cd ../../..
