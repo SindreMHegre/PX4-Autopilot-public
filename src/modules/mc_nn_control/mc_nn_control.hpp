@@ -116,6 +116,9 @@ private:
 	void ConfigureNeuralFlightMode(int8 mode_id);
 	void ReplyToArmingCheck(int8 request_id);
 	void CheckModeRegistration();
+	void generate_trajectory_setpoint(float dt);
+	void reset_trajectory_setpoint(vehicle_local_position_s &_position);
+	void check_setpoint_validity(vehicle_local_position_s &_position);
 
 	// Subscriptions
 	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
