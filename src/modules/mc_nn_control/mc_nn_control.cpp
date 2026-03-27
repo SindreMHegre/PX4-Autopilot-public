@@ -141,6 +141,8 @@ void MulticopterNeuralNetworkControl::RegisterNeuralFlightMode()
 	register_ext_component_request.px4_ros2_api_version = 1;
 	register_ext_component_request.register_arming_check = true;
 	register_ext_component_request.register_mode = true;
+	register_ext_component_request.enable_replace_internal_mode = _param_offboard.get();
+	register_ext_component_request.replace_internal_mode = vehicle_status_s::NAVIGATION_STATE_OFFBOARD;
 	_register_ext_component_request_pub.publish(register_ext_component_request);
 }
 

@@ -163,6 +163,7 @@ private:
 		(ParamInt<px4::params::MC_NN_MAX_RPM>) _param_max_rpm,
 		(ParamInt<px4::params::MC_NN_MIN_RPM>) _param_min_rpm,
 		(ParamFloat<px4::params::MC_NN_THRST_COEF>) _param_thrust_coeff,
-		(ParamBool<px4::params::MC_NN_MANL_CTRL>) _param_manual_control
+		(ParamBool<px4::params::MC_NN_MANL_CTRL>) _param_manual_control,
+		(ParamBool<px4::params::MC_NN_OFFB>) _param_offboard
 	)
 };

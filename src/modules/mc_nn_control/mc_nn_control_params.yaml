@@ -40,3 +40,15 @@ parameters:
       type: boolean
       default: 1
       reboot_required: true
+    MC_NN_OFFB:
+      description:
+        short: Enable Offboard mode replacement
+        long: |
+          When enabled, the Neural Control mode will replace the Offboard mode.
+          If disabled, Neural Control is available as a separate external mode
+          and will hold position without requiring external setpoints.
+          When enabled, it requires a stream of trajectory_setpoints (e.g. from MAVLink)
+          to be activated. Also set MC_NN_MANL_CTRL=0 to read external setpoints.
+      type: boolean
+      default: 0
+      reboot_required: true
