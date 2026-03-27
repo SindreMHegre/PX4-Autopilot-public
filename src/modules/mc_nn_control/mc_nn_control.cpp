@@ -44,6 +44,10 @@
 #else
 #include <chrono>
 #endif
+#ifndef MC_NN_EMBED_MODEL
+#include <stdio.h>
+#include <sys/stat.h>
+#endif
 
 ModuleBase::Descriptor MulticopterNeuralNetworkControl::desc{task_spawn, custom_command, print_usage};
 
@@ -73,6 +77,9 @@ MulticopterNeuralNetworkControl::MulticopterNeuralNetworkControl() :
 MulticopterNeuralNetworkControl::~MulticopterNeuralNetworkControl()
 {
 	perf_free(_loop_perf);
+#ifndef MC_NN_EMBED_MODEL
+	delete[] _model_buffer;
+#endif
 }
 
 
@@ -89,7 +96,47 @@ bool MulticopterNeuralNetworkControl::init()
 int MulticopterNeuralNetworkControl::InitializeNetwork()
 {
 	// Initialize the neural network
+#ifdef MC_NN_EMBED_MODEL
 	const tflite::Model *control_model = ::tflite::GetModel(control_net_tflite);
+#else
+	const char *model_path = PX4_STORAGEDIR "/nn_control/control_net.tflite";
+
+	struct stat st;
+
+	if (stat(model_path, &st) != 0) {
+		PX4_ERR("Model file not found: %s", model_path);
+		return -1;
+	}
+
+	_model_buffer = new uint8_t[st.st_size];
+
+	if (!_model_buffer) {
+		PX4_ERR("Failed to allocate %ld bytes for model", (long)st.st_size);
+		return -1;
+	}
+
+	FILE *f = fopen(model_path, "rb");
+
+	if (!f) {
+		PX4_ERR("Failed to open model file: %s", model_path);
+		delete[] _model_buffer;
+		_model_buffer = nullptr;
+		return -1;
+	}
+
+	size_t read_size = fread(_model_buffer, 1, st.st_size, f);
+	fclose(f);
+
+	if ((long)read_size != st.st_size) {
+		PX4_ERR("Model read incomplete (%zu / %ld bytes)", read_size, (long)st.st_size);
+		delete[] _model_buffer;
+		_model_buffer = nullptr;
+		return -1;
+	}
+
+	PX4_INFO("Loaded model from %s (%ld bytes)", model_path, (long)st.st_size);
+	const tflite::Model *control_model = ::tflite::GetModel(_model_buffer);
+#endif
 
 	// Set up the interpreter
 	static NNControlOpResolver resolver;

@@ -53,8 +53,10 @@
 #include <tflite_micro/tensorflow/lite/micro/micro_interpreter.h>
 #include <tflite_micro/tensorflow/lite/schema/schema_generated.h>
 
-// Include model
+// Include model (only when embedding in firmware)
+#ifdef MC_NN_EMBED_MODEL
 #include "control_net.hpp"
+#endif
 
 #include <uORB/Publication.hpp>
 #include <uORB/Subscription.hpp>
@@ -149,9 +151,12 @@ private:
 	uint8 _mode_request_id{231}; //Random value
 	int8 _arming_check_id{-1};
 	int8 _mode_id{-1};
-	tflite::MicroInterpreter *_interpreter;
-	TfLiteTensor *_input_tensor;
-	TfLiteTensor *_output_tensor;
+	tflite::MicroInterpreter *_interpreter{nullptr};
+	TfLiteTensor *_input_tensor{nullptr};
+	TfLiteTensor *_output_tensor{nullptr};
+#ifndef MC_NN_EMBED_MODEL
+	uint8_t *_model_buffer{nullptr}; // heap buffer for SD-card-loaded model
+#endif
 	float _input_data[15];
 	trajectory_setpoint_s _trajectory_setpoint;
 	vehicle_angular_velocity_s _angular_velocity;

@@ -35,6 +35,16 @@ get_directory_property(FLAGS COMPILE_OPTIONS)
 list(REMOVE_ITEM FLAGS "-Wcast-align")
 set_directory_properties(PROPERTIES COMPILE_OPTIONS "${FLAGS}")
 
+# When ON (default), the TFLite model is compiled into the firmware binary.
+# Set to OFF to load the model from /fs/microsd/nn_control/control_net.tflite at runtime.
+set(MC_NN_EMBED_MODEL ON CACHE BOOL "Embed neural network model in firmware (disable to load from SD card)")
+
+if(MC_NN_EMBED_MODEL)
+	set(NN_MODEL_SRCS control_net.cpp control_net.hpp)
+else()
+	set(NN_MODEL_SRCS "")
+endif()
+
 px4_add_module(
 	MODULE mc_nn_control
 	MAIN mc_nn_control
@@ -42,8 +52,7 @@ px4_add_module(
 	SRCS
 		mc_nn_control.cpp
 		mc_nn_control.hpp
-		control_net.cpp
-		control_net.hpp
+		${NN_MODEL_SRCS}
 	MODULE_CONFIG
 		mc_nn_control_params.yaml
 	DEPENDS
@@ -54,3 +63,7 @@ px4_add_module(
 target_link_libraries(mc_nn_control PRIVATE tensorflow_lite_micro)
 target_include_directories(mc_nn_control PRIVATE
 	${CMAKE_SOURCE_DIR}/src/lib/tensorflow_lite_micro)
+
+if(MC_NN_EMBED_MODEL)
+	target_compile_definitions(mc_nn_control PRIVATE MC_NN_EMBED_MODEL)
+endif()
